@@ -27,10 +27,11 @@ Follow these repo conventions when working in this repository.
 Use this internal layout per service as needed:
 
 - `internal/globals` for env, config, logger, db, kafka, and service-wide wiring
-- `internal/transport` for HTTP handlers and router wiring when the service exposes HTTP
 - `internal/usecase` for behavior-oriented application logic, including event handlers and workers
 - `internal/repo` for persistence adapters and repository interfaces local to the service
 - `internal/types` for service-local types that should not be shared
+- `config.yml` at the service root for per-app configuration
+- `router.go` at the service root when the service exposes HTTP
 
 Do not add `internal/app`.
 
@@ -39,10 +40,31 @@ Prefer use case-oriented files over extra technical layers. Logic that might oth
 ## Shared Code
 
 - Use `pkg/` only for code reused across services.
+- Prefer `pkg/common_types` for shared contracts and shared common types.
+- Prefer shared `github.com/yirez/go-gw-test/pkg/configuration_manager` for config, logger, and DB bootstrap.
+- Prefer shared `github.com/yirez/go-gw-test/pkg/rest_qol` for HTTP/server helpers.
 - Keep shared contracts explicit and small.
 - Put service-local types in `internal/types`.
-- Put intentionally shared types in `pkg/types`.
-- Put shared event and command contracts in `pkg/contracts` when they become necessary.
+- Put intentionally shared types and contracts under `pkg/common_types`.
+
+## Repositories
+
+- Prefer `FooRepo` naming for repository interfaces.
+- Prefer `FooRepoImpl` for the concrete implementation.
+- Prefer `NewFooRepo()` constructors returning the interface.
+- Keep repository interfaces small and use case-oriented.
+- Add concrete repo implementations only when the implementation work starts to exist.
+
+## Usecases
+
+- Prefer `FooUseCase` naming for usecase interfaces.
+- Prefer `FooUseCaseImpl` for the concrete implementation.
+- Prefer `NewFooUseCase(...)` constructors returning the interface.
+- Prefer one app-level usecase per service that exposes multiple service operations.
+- Prefer service methods such as `CreateOrder(...)`, `GetOrderView(...)`, or `HandleEvent(...)` over one usecase type per handler.
+- Inject only the specific repo or setting a usecase actually needs.
+- Do not pass broad globals into a usecase unless the usecase genuinely uses them.
+- Wire constructed usecases in `router.go`, then pass bound methods to HTTP routes.
 
 ## Stack
 
