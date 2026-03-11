@@ -1,0 +1,3 @@
+display_name: EDA Go Monorepo
+short_description: Conventions for this EDA Go demo repo.
+default_prompt: Use this skill when working in this repository to follow the monorepo conventions, documentation rules, and EDA pattern-comment guidance.
